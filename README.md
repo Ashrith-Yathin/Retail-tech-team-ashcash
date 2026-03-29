@@ -1,5 +1,7 @@
 # Hyperlocal Deal Discovery Platform
 
+https://dealdrop-teamashcash.vercel.app/
+
 Hyperlocal Deal Discovery Platform is a full-stack web application that helps local retailers publish overstocked or near-expiry products and lets nearby customers discover live discounts in real time. The project includes a Next.js frontend, a FastAPI backend, PostgreSQL schema, and a separate machine learning module for smart deal ranking.
 
 ## Project Structure
