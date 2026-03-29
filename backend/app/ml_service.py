@@ -1,7 +1,10 @@
 from datetime import datetime
 from pathlib import Path
 
-import joblib
+try:
+    import joblib
+except ImportError:  # pragma: no cover - optional in lightweight deploys
+    joblib = None
 
 from app.config import get_settings
 from app.utils import distance_score, expiry_urgency
@@ -48,7 +51,7 @@ def rule_based_score(feature_row: dict) -> float:
 
 def rank_feature_rows(feature_rows: list[dict]) -> list[float]:
     model_file = _model_path()
-    if model_file.exists():
+    if model_file.exists() and joblib is not None:
         model = joblib.load(model_file)
         ordered_features = [
             [
@@ -64,4 +67,3 @@ def rank_feature_rows(feature_rows: list[dict]) -> list[float]:
         predictions = model.predict_proba(ordered_features)[:, 1]
         return [round(float(pred * 100), 2) for pred in predictions]
     return [rule_based_score(row) for row in feature_rows]
-
