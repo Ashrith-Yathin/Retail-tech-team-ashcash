@@ -32,7 +32,7 @@ export default function LoginPage() {
     <main className="mx-auto max-w-lg px-4 py-12 sm:px-6">
       <section className="panel p-8">
         <h1 className="text-3xl font-semibold">Login</h1>
-        <p className="mt-2 text-sm text-stone-600">Retailers can manage deals, while customers can optionally sign in and still browse as guests.</p>
+        <p className="mt-2 text-sm text-stone-600">Retailers can manage deals, while customers can optionally sign in and browse as guests.</p>
         <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
           <input name="email" type="email" placeholder="Email address" required />
           <input name="password" type="password" placeholder="Password" required />
