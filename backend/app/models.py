@@ -45,7 +45,11 @@ class Product(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     retailer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+    brand: Mapped[str | None] = mapped_column(String(255), nullable=True)
     category: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    tags: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_featured: Mapped[bool] = mapped_column(default=False)
     original_price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     discount: Mapped[float] = mapped_column(Float, nullable=False)
     final_price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
@@ -68,4 +72,3 @@ class Deal(Base):
     clicks: Mapped[int] = mapped_column(Integer, default=0)
 
     product: Mapped["Product"] = relationship(back_populates="deal")
-

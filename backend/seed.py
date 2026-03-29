@@ -60,6 +60,42 @@ def seed():
             db.flush()
             db.add(Deal(product_id=product.id, score=88.5, views=26, clicks=10))
 
+        existing_batter = db.scalar(select(Product).where(Product.name == "Idli Dosa Batter"))
+        if existing_batter is None:
+            batter = Product(
+                retailer_id=retailer.id,
+                name="Idli Dosa Batter",
+                category="Breakfast Staples",
+                original_price=70,
+                discount=35,
+                final_price=calculate_final_price(70, 35),
+                expiry_time=datetime.now(timezone.utc) + timedelta(hours=10),
+                quantity=18,
+                image_url=None,
+            )
+            db.add(batter)
+            db.flush()
+            db.add(Deal(product_id=batter.id, score=91.0, views=31, clicks=14))
+
+        existing_fish = db.scalar(select(Product).where(Product.name == "Vanjaram Fish Steaks"))
+        if existing_fish is None:
+            fish = Product(
+                retailer_id=retailer.id,
+                name="Vanjaram Fish Steaks",
+                category="Seafood",
+                original_price=320,
+                discount=30,
+                final_price=calculate_final_price(320, 30),
+                expiry_time=datetime.now(timezone.utc) + timedelta(hours=5),
+                quantity=6,
+                image_url=None,
+                description="Fresh seafood flash sale for evening shoppers.",
+                tags=["non-veg", "fish", "seafood"],
+            )
+            db.add(fish)
+            db.flush()
+            db.add(Deal(product_id=fish.id, score=84.0, views=18, clicks=8))
+
         db.commit()
         print("Seed completed.")
     finally:
@@ -68,4 +104,3 @@ def seed():
 
 if __name__ == "__main__":
     seed()
-

@@ -25,6 +25,39 @@
   --border: 38 10% 88%;
   --input: 38 10% 88%;
   --ring: 30 8% 22%;
+  --panel-glow: rgba(176, 92, 36, 0.12);
+  --diet-wash: radial-gradient(circle at top right, rgba(132, 168, 88, 0.2), transparent 32%);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: 28 18% 10%;
+  --foreground: 36 24% 92%;
+  --card: 26 16% 14%;
+  --card-foreground: 36 24% 92%;
+  --popover: 26 16% 14%;
+  --popover-foreground: 36 24% 92%;
+  --primary: 35 54% 72%;
+  --primary-foreground: 24 20% 10%;
+  --secondary: 24 12% 18%;
+  --secondary-foreground: 36 24% 92%;
+  --muted: 26 10% 18%;
+  --muted-foreground: 32 10% 68%;
+  --accent: 18 40% 42%;
+  --accent-foreground: 36 24% 92%;
+  --destructive: 0 72% 58%;
+  --destructive-foreground: 36 24% 92%;
+  --border: 25 12% 24%;
+  --input: 25 12% 24%;
+  --ring: 35 54% 72%;
+  --panel-glow: rgba(244, 182, 98, 0.12);
+  --diet-wash: radial-gradient(circle at top right, rgba(206, 122, 45, 0.16), transparent 34%);
+}
+
+:root[data-diet="all"] {
+  --diet-wash:
+    radial-gradient(circle at top left, rgba(181, 52, 32, 0.22), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(72, 119, 81, 0.18), transparent 32%);
 }
 
 body {
@@ -32,6 +65,11 @@ body {
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: var(--diet-wash);
+  transition:
+    background-color 350ms ease,
+    color 350ms ease,
+    background-image 500ms ease;
 }
 
 a {
@@ -50,7 +88,17 @@ h6 {
 input,
 select,
 textarea {
-  @apply w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 shadow-sm outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/20;
+  @apply w-full rounded-2xl border px-4 py-3 text-sm shadow-sm outline-none transition;
+  border-color: hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: hsl(var(--accent));
+  box-shadow: 0 0 0 4px color-mix(in srgb, hsl(var(--accent)) 20%, transparent);
 }
 
 button {
@@ -58,7 +106,12 @@ button {
 }
 
 .panel {
-  @apply rounded-3xl border border-white/70 bg-white/90 shadow-soft backdrop-blur;
+  @apply rounded-3xl border shadow-soft backdrop-blur;
+  border-color: hsl(var(--border));
+  background: color-mix(in srgb, hsl(var(--card)) 88%, transparent);
+  box-shadow:
+    0 20px 45px rgba(28, 25, 23, 0.08),
+    0 0 0 1px var(--panel-glow);
 }
 
 .font-display {
@@ -131,5 +184,35 @@ button {
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+.mode-switch-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.mode-switch-shell::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    conic-gradient(from 120deg, rgba(255,255,255,0.12), transparent 30%, rgba(255,255,255,0.05), transparent 72%);
+  transform: translateX(-45%) rotate(0deg);
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+.mode-switch-shell[data-active="true"]::before {
+  opacity: 1;
+  animation: dial-burst 650ms ease;
+}
+
+@keyframes dial-burst {
+  0% {
+    transform: translateX(-55%) rotate(0deg) scale(0.9);
+  }
+  100% {
+    transform: translateX(0%) rotate(220deg) scale(1.15);
   }
 }

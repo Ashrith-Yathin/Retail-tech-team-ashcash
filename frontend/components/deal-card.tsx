@@ -1,22 +1,40 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
+import { Heart } from "lucide-react";
 
 import { CountdownTimer } from "@/components/countdown-timer";
+import { VisualPlaceholder } from "@/components/visual-placeholder";
 import { Deal } from "@/lib/types";
 
-export function DealCard({ deal }: { deal: Deal }) {
+export function DealCard({
+  deal,
+  isFavorite = false,
+  onToggleFavorite
+}: {
+  deal: Deal;
+  isFavorite?: boolean;
+  onToggleFavorite?: (dealId: number) => void;
+}) {
   return (
     <article className="panel overflow-hidden">
       <div className="relative h-48 bg-stone-100">
-        <Image
-          src={deal.image_url || "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80"}
-          alt={deal.product_name}
-          fill
-          className="object-cover"
+        <VisualPlaceholder
+          title={deal.product_name}
+          subtitle={deal.store_name}
+          accent={deal.category.toLowerCase().includes("dairy") ? "moss" : deal.category.toLowerCase().includes("bakery") ? "ink" : "clay"}
+          className="h-full"
         />
         <span className="absolute left-4 top-4 rounded-full bg-coral px-3 py-1 text-xs font-semibold text-white">
           {deal.discount}% off
         </span>
+        <button
+          type="button"
+          onClick={() => onToggleFavorite?.(deal.id)}
+          className="absolute right-4 top-4 rounded-full bg-white/90 p-2 text-stone-700 shadow-sm"
+        >
+          <Heart className={`h-4 w-4 ${isFavorite ? "fill-coral text-coral" : ""}`} />
+        </button>
       </div>
       <div className="space-y-4 p-5">
         <div className="space-y-1">
@@ -37,10 +55,20 @@ export function DealCard({ deal }: { deal: Deal }) {
           <CountdownTimer expiryTime={deal.expiry_time} />
         </div>
 
+        <div className="flex flex-wrap gap-2 text-xs">
+          <span className="rounded-full bg-stone-100 px-2.5 py-1 text-stone-700">{deal.category}</span>
+          <span className="rounded-full bg-amber-100 px-2.5 py-1 text-amber-800">{deal.urgency_label}</span>
+          <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-emerald-800">{deal.availability_label}</span>
+        </div>
+
         <div className="flex items-center justify-between text-sm text-stone-600">
-          <span>{deal.category}</span>
+          <span>{deal.popularity_label}</span>
           <span>Score {deal.score.toFixed(1)}</span>
         </div>
+
+        <p className="text-xs text-stone-500">
+          Save Rs. {deal.savings_amount.toFixed(2)} and help prevent about {deal.waste_prevented_kg.toFixed(2)} kg of waste.
+        </p>
 
         <Link
           href={`/deals/${deal.id}`}
@@ -52,4 +80,3 @@ export function DealCard({ deal }: { deal: Deal }) {
     </article>
   );
 }
-

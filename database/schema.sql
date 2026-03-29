@@ -20,7 +20,11 @@ CREATE TABLE IF NOT EXISTS products (
     id SERIAL PRIMARY KEY,
     retailer_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
+    brand VARCHAR(255),
     category VARCHAR(120) NOT NULL,
+    description TEXT,
+    tags TEXT,
+    is_featured BOOLEAN NOT NULL DEFAULT FALSE,
     original_price NUMERIC(10, 2) NOT NULL,
     discount DOUBLE PRECISION NOT NULL,
     final_price NUMERIC(10, 2) NOT NULL,
@@ -42,4 +46,3 @@ CREATE INDEX IF NOT EXISTS idx_products_expiry_time ON products(expiry_time);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 CREATE INDEX IF NOT EXISTS idx_stores_retailer_id ON stores(retailer_id);
 CREATE INDEX IF NOT EXISTS idx_deals_product_id ON deals(product_id);
-

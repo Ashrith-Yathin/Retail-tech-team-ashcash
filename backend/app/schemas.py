@@ -52,7 +52,11 @@ class StoreResponse(BaseModel):
 
 class ProductBase(BaseModel):
     name: str
+    brand: Optional[str] = None
     category: str
+    description: Optional[str] = None
+    tags: Optional[list[str]] = None
+    is_featured: bool = False
     original_price: float = Field(gt=0)
     discount: float = Field(ge=0, le=100)
     expiry_time: datetime
@@ -70,7 +74,11 @@ class ProductCreate(ProductBase):
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
+    brand: Optional[str] = None
     category: Optional[str] = None
+    description: Optional[str] = None
+    tags: Optional[list[str]] = None
+    is_featured: Optional[bool] = None
     original_price: Optional[float] = Field(default=None, gt=0)
     discount: Optional[float] = Field(default=None, ge=0, le=100)
     expiry_time: Optional[datetime] = None
@@ -88,7 +96,11 @@ class ProductResponse(BaseModel):
     id: int
     retailer_id: int
     name: str
+    brand: Optional[str]
     category: str
+    description: Optional[str]
+    tags: Optional[list[str]]
+    is_featured: bool
     original_price: float
     discount: float
     final_price: float
@@ -111,13 +123,22 @@ class DealResponse(BaseModel):
     latitude: float
     longitude: float
     product_name: str
+    brand: Optional[str]
     category: str
+    description: Optional[str]
+    tags: list[str]
     original_price: float
     discount: float
     final_price: float
+    savings_amount: float
     expiry_time: datetime
     quantity: int
     image_url: Optional[str]
+    urgency_label: str
+    popularity_label: str
+    availability_label: str
+    waste_prevented_kg: float
+    ranking_reasons: list[str]
 
 
 class ProductAnalytics(BaseModel):
@@ -127,6 +148,38 @@ class ProductAnalytics(BaseModel):
     clicks: int
     conversion_rate: float
     status: Literal["active", "expired"]
+
+
+class DashboardSummary(BaseModel):
+    active_count: int
+    expired_count: int
+    total_views: int
+    total_clicks: int
+    average_conversion_rate: float
+    expiring_soon_count: int
+    low_stock_count: int
+    top_performing_product: Optional[str]
+
+
+class CategoryInsight(BaseModel):
+    name: str
+    count: int
+
+
+class SearchSuggestion(BaseModel):
+    label: str
+    type: Literal["product", "category", "store", "brand"]
+
+
+class ImpactSummary(BaseModel):
+    total_active_deals: int
+    total_retailers: int
+    total_estimated_savings: float
+    total_waste_prevented_kg: float
+
+
+class ReservationRequest(BaseModel):
+    quantity: int = Field(default=1, gt=0, le=10)
 
 
 class NearbyDealsQuery(BaseModel):
@@ -151,4 +204,3 @@ class RankDealsRequest(BaseModel):
 
 class MessageResponse(BaseModel):
     message: str
-

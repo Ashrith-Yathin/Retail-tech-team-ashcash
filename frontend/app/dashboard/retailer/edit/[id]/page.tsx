@@ -53,7 +53,14 @@ export default function EditProductPage() {
         Number(params.id),
         {
           name: formData.get("name"),
+          brand: formData.get("brand"),
           category: formData.get("category"),
+          description: formData.get("description"),
+          tags: String(formData.get("tags") || "")
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean),
+          is_featured: Boolean(formData.get("is_featured")),
           original_price: Number(formData.get("original_price")),
           discount: Number(formData.get("discount")),
           expiry_time: formData.get("expiry_time"),
@@ -80,8 +87,17 @@ export default function EditProductPage() {
         <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 sm:grid-cols-2">
             <input name="name" defaultValue={product?.name} placeholder="Product name" required />
-            <input name="category" defaultValue={product?.category} placeholder="Category" required />
+            <input name="brand" defaultValue={product?.brand || ""} placeholder="Brand (optional)" />
           </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <input name="category" defaultValue={product?.category} placeholder="Category" required />
+            <input name="tags" defaultValue={product?.tags?.join(", ") || ""} placeholder="Tags separated by commas" />
+          </div>
+          <textarea name="description" defaultValue={product?.description || ""} placeholder="Short product description" rows={4} />
+          <label className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-700">
+            <input name="is_featured" type="checkbox" defaultChecked={Boolean(product?.is_featured)} className="h-4 w-4" />
+            Pin as featured deal
+          </label>
           <div className="grid gap-4 sm:grid-cols-2">
             <input
               name="original_price"

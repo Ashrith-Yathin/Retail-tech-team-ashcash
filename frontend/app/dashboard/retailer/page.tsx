@@ -5,12 +5,13 @@ import { useEffect, useState } from "react";
 
 import { api } from "@/lib/api";
 import { getSession } from "@/lib/session";
-import { Product, ProductAnalytics } from "@/lib/types";
+import { DashboardSummary, Product, ProductAnalytics } from "@/lib/types";
 
 export default function RetailerDashboardPage() {
   const [activeDeals, setActiveDeals] = useState<Product[]>([]);
   const [expiredDeals, setExpiredDeals] = useState<Product[]>([]);
   const [analytics, setAnalytics] = useState<ProductAnalytics[]>([]);
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function RetailerDashboardPage() {
         setActiveDeals(data.active_deals as Product[]);
         setExpiredDeals(data.expired_deals as Product[]);
         setAnalytics(data.analytics as ProductAnalytics[]);
+        setSummary(data.summary);
       })
       .catch((loadError) => setError(loadError instanceof Error ? loadError.message : "Unable to load dashboard"));
   }, []);
@@ -53,6 +55,27 @@ export default function RetailerDashboardPage() {
 
       {error ? <p className="text-sm text-coral">{error}</p> : null}
 
+      {summary ? (
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="panel p-5">
+            <p className="text-sm text-stone-500">Active deals</p>
+            <p className="mt-2 text-3xl font-semibold">{summary.active_count}</p>
+          </div>
+          <div className="panel p-5">
+            <p className="text-sm text-stone-500">Total views</p>
+            <p className="mt-2 text-3xl font-semibold">{summary.total_views}</p>
+          </div>
+          <div className="panel p-5">
+            <p className="text-sm text-stone-500">Expiring soon</p>
+            <p className="mt-2 text-3xl font-semibold">{summary.expiring_soon_count}</p>
+          </div>
+          <div className="panel p-5">
+            <p className="text-sm text-stone-500">Low stock alerts</p>
+            <p className="mt-2 text-3xl font-semibold">{summary.low_stock_count}</p>
+          </div>
+        </section>
+      ) : null}
+
       <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-6">
           <div className="panel p-6">
@@ -69,6 +92,11 @@ export default function RetailerDashboardPage() {
                       <p className="text-sm text-stone-600">
                         {product.category} · Rs. {product.final_price.toFixed(2)} · {product.discount}% off
                       </p>
+                      {product.is_featured ? (
+                        <span className="mt-2 inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800">
+                          Featured deal
+                        </span>
+                      ) : null}
                     </div>
                     <div className="flex gap-3">
                       <Link
@@ -112,6 +140,12 @@ export default function RetailerDashboardPage() {
 
         <div className="panel p-6">
           <h2 className="text-xl font-semibold">Retailer Analytics</h2>
+          {summary ? (
+            <div className="mt-4 rounded-2xl bg-stone-50 p-4 text-sm text-stone-700">
+              Average conversion: {summary.average_conversion_rate}% · Total clicks: {summary.total_clicks}
+              {summary.top_performing_product ? ` · Top performer: ${summary.top_performing_product}` : ""}
+            </div>
+          ) : null}
           <div className="mt-5 space-y-4">
             {analytics.map((item) => (
               <div key={item.product_id} className="rounded-2xl border border-stone-200 p-4">
@@ -132,6 +166,11 @@ export default function RetailerDashboardPage() {
             ))}
             {analytics.length === 0 ? <p className="text-sm text-stone-500">Analytics will appear once products are added.</p> : null}
           </div>
+          {summary ? (
+            <div className="mt-6 rounded-2xl border border-dashed border-stone-300 p-4 text-sm text-stone-700">
+              Alerts: {summary.expiring_soon_count} expiring soon and {summary.low_stock_count} low-stock deal(s) need attention.
+            </div>
+          ) : null}
         </div>
       </section>
     </main>

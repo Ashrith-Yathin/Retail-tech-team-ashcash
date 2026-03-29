@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 const footerLinks = {
-  Platform: ["How it works", "Browse deals", "For retailers", "Pricing"],
-  Company: ["About us", "Careers", "Blog", "Press"],
+  Platform: ["Hyperlocal discovery", "Smart ranking", "Reservations", "Retailer dashboard"],
+  Categories: ["Rice & grains", "Spices & masalas", "Dals & pulses", "Breakfast staples"],
   Support: ["Help center", "Contact", "Privacy policy", "Terms"]
 };
 
@@ -14,9 +14,9 @@ export function Footer() {
       <div className="mx-auto max-w-[1200px]">
         <div className="mb-16 grid gap-12 md:grid-cols-4">
           <div>
-            <span className="mb-4 block font-display text-[28px] font-semibold tracking-tight">localé</span>
+            <span className="mb-4 block font-display text-[28px] font-semibold tracking-tight">DealDrop</span>
             <p className="max-w-[260px] text-body-sm text-background/50">
-              Hyperlocal deal discovery. Save money, reduce waste, support local.
+              Hyperlocal flash-sale discovery for neighborhood grocery stores. Save money, reduce waste, support local retailers.
             </p>
             <p className="mt-5 text-[11px] tracking-wide text-background/35">
               Team Ash Cash built for Vashist Hackathon 3.0
@@ -42,7 +42,7 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col items-center justify-between gap-4 border-t border-background/10 pt-8 md:flex-row">
-          <span className="text-[11px] tracking-wide text-background/30">© {year} localé. All rights reserved.</span>
+          <span className="text-[11px] tracking-wide text-background/30">© {year} DealDrop. All rights reserved.</span>
           <div className="flex gap-6">
             {["Instagram", "Twitter", "LinkedIn"].map((social) => (
               <Link key={social} href="/" className="text-[11px] tracking-wide text-background/30 transition-colors hover:text-background/60">

@@ -23,6 +23,14 @@ INSERT INTO products (retailer_id, name, category, original_price, discount, fin
 SELECT id, 'Greek Yogurt Pack', 'Dairy', 120, 45, 66, NOW() + INTERVAL '4 hour', 20, 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=80'
 FROM users WHERE email = 'retailer2@example.com';
 
+INSERT INTO products (retailer_id, name, category, original_price, discount, final_price, expiry_time, quantity, image_url)
+SELECT id, 'Idli Dosa Batter', 'Breakfast Staples', 72, 30, 50.4, NOW() + INTERVAL '8 hour', 15, NULL
+FROM users WHERE email = 'retailer1@example.com';
+
+INSERT INTO products (retailer_id, name, category, original_price, discount, final_price, expiry_time, quantity, image_url)
+SELECT id, 'Vanjaram Fish Steaks', 'Seafood', 340, 28, 244.8, NOW() + INTERVAL '5 hour', 7, NULL
+FROM users WHERE email = 'retailer2@example.com';
+
 INSERT INTO deals (product_id, score, views, clicks)
 SELECT id, 82.4, 34, 11 FROM products WHERE name = 'Whole Wheat Bread'
 ON CONFLICT (product_id) DO NOTHING;
@@ -31,3 +39,10 @@ INSERT INTO deals (product_id, score, views, clicks)
 SELECT id, 91.2, 52, 24 FROM products WHERE name = 'Greek Yogurt Pack'
 ON CONFLICT (product_id) DO NOTHING;
 
+INSERT INTO deals (product_id, score, views, clicks)
+SELECT id, 86.4, 27, 12 FROM products WHERE name = 'Idli Dosa Batter'
+ON CONFLICT (product_id) DO NOTHING;
+
+INSERT INTO deals (product_id, score, views, clicks)
+SELECT id, 83.1, 21, 9 FROM products WHERE name = 'Vanjaram Fish Steaks'
+ON CONFLICT (product_id) DO NOTHING;

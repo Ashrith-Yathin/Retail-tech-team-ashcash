@@ -3,87 +3,109 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { api } from "@/lib/api";
+import { VisualPlaceholder } from "@/components/visual-placeholder";
+import { useAppPreferences } from "@/lib/app-preferences";
+import { ImpactSummary } from "@/lib/types";
+
 const slides = [
   {
-    image: "/design-assets/hero-market.jpg",
-    category: "NEARBY DEALS",
-    name: "DISCOVER"
+    category: "HYPERLOCAL FLASH SALES",
+    name: "DEALDROP",
+    accent: "clay" as const
   },
   {
-    image: "/design-assets/hero-produce.jpg",
-    category: "FRESH PRODUCE",
-    name: "SAVINGS"
+    category: "SOUTH INDIAN GROCERIES",
+    name: "SAVINGS",
+    accent: "moss" as const
   },
   {
-    image: "/design-assets/hero-bakery.jpg",
-    category: "LOCAL STORES",
-    name: "EXPLORE"
+    category: "NEARBY KIRANAS",
+    name: "DISCOVER",
+    accent: "ink" as const
   }
 ];
 
-const deals = [
-  { category: "Fresh Produce", name: "Organic Tomatoes", price: "Rs. 40", original: "Rs. 120", image: "/design-assets/category-fresh.jpg" },
-  { category: "Bakery", name: "Sourdough Loaf", price: "Rs. 60", original: "Rs. 150", image: "/design-assets/category-bakery.jpg" },
-  { category: "Dairy", name: "Artisan Cheese", price: "Rs. 90", original: "Rs. 250", image: "/design-assets/category-dairy.jpg" },
-  { category: "Deli & Meats", name: "Smoked Chicken", price: "Rs. 150", original: "Rs. 400", image: "/design-assets/category-meat.jpg" },
-  { category: "Grocery", name: "Organic Granola", price: "Rs. 80", original: "Rs. 200", image: "/design-assets/category-grocery.jpg" },
-  { category: "Bakery", name: "Croissants", price: "Rs. 45", original: "Rs. 120", image: "/design-assets/hero-bakery.jpg" }
+const vegDeals = [
+  { category: "Rice & Grains", name: "Ponni Boiled Rice", price: "Rs. 49", original: "Rs. 92", accent: "moss" as const },
+  { category: "Breakfast Staples", name: "Idli Dosa Batter", price: "Rs. 34", original: "Rs. 68", accent: "ink" as const },
+  { category: "Spices & Masalas", name: "Sambar Powder", price: "Rs. 39", original: "Rs. 85", accent: "clay" as const },
+  { category: "Dals & Pulses", name: "Toor Dal Value Pack", price: "Rs. 71", original: "Rs. 128", accent: "moss" as const },
+  { category: "Dairy & Paneer", name: "Fresh Paneer", price: "Rs. 58", original: "Rs. 104", accent: "clay" as const },
+  { category: "Snacks", name: "Murukku Combo", price: "Rs. 29", original: "Rs. 55", accent: "ink" as const }
 ];
 
-const categories = [
-  { name: "Fresh Produce", image: "/design-assets/category-fresh.jpg" },
-  { name: "Bakery", image: "/design-assets/category-bakery.jpg" },
-  { name: "Dairy", image: "/design-assets/category-dairy.jpg" },
-  { name: "Deli & Meats", image: "/design-assets/category-meat.jpg" },
-  { name: "Grocery", image: "/design-assets/category-grocery.jpg" }
+const mixedDeals = [
+  ...vegDeals,
+  { category: "Seafood", name: "Vanjaram Fish Steaks", price: "Rs. 149", original: "Rs. 278", accent: "ink" as const },
+  { category: "Poultry", name: "Pepper Chicken Cuts", price: "Rs. 129", original: "Rs. 235", accent: "clay" as const }
+];
+
+const vegCategories = [
+  { name: "Rice & Grains", accent: "moss" as const },
+  { name: "Spices & Masalas", accent: "clay" as const },
+  { name: "Dals & Pulses", accent: "ink" as const },
+  { name: "Fresh Vegetables", accent: "moss" as const },
+  { name: "Breakfast Staples", accent: "clay" as const },
+  { name: "Dairy & Paneer", accent: "ink" as const },
+  { name: "Snacks", accent: "moss" as const },
+  { name: "Puja Essentials", accent: "clay" as const }
+];
+
+const mixedCategories = [
+  ...vegCategories,
+  { name: "Seafood", accent: "ink" as const },
+  { name: "Poultry", accent: "clay" as const }
 ];
 
 const values = [
   {
-    keyword: "Sustainable",
+    keyword: "Visible",
     description:
-      "Locale is committed to reducing food waste. Every deal claimed is food saved from landfill. We connect expiring goods with conscious consumers, creating a meaningful impact on both wallet and planet."
+      "Local retailers often struggle to clear overstocked or near-expiry inventory because they do not have the digital reach to surface fast-moving flash sales to nearby shoppers."
   },
   {
     keyword: "Hyperlocal",
     description:
-      "Discover deals within walking distance. We prioritize proximity so you can grab savings on your daily route. Our location-first approach means convenience is built in."
+      "DealDrop closes that gap by matching shoppers to nearby stores in real time. Distance, urgency, and value come together so the best deals show up at the right moment."
   },
   {
-    keyword: "Real-Time",
+    keyword: "Timely",
     description:
-      "Deals update as retailers add new markdowns. Smart ranking ensures the most relevant, freshest discounts surface first for each shopper."
+      "That means fewer products wasted, better savings for households, and more revenue opportunities for kiranas, bakeries, and neighborhood grocery retailers."
   }
 ];
 
 const steps = [
   {
-    title: "What is it?",
+    title: "What is DealDrop?",
     description:
-      "Locale is a hyperlocal deal discovery platform. We surface real-time discounts from nearby stores on products approaching their best-before date so you save money while reducing food waste."
+      "DealDrop is a hyperlocal flash sale platform that helps local retailers upload overstocked or near-expiry products and instantly surface them to nearby customers."
   },
   {
-    title: "How to use",
+    title: "How it works",
     description:
-      "Enable location or enter your area. Browse smart-ranked deals sorted by discount depth, distance, and urgency. Head to the store and pick up your items at a fraction of the cost."
+      "Retailers post time-sensitive inventory with discounts, expiry windows, and location. Customers browse smart-ranked deals by distance, discount, and urgency, then head to the store before the timer runs out."
   },
   {
     title: "Why it matters",
     description:
-      "Retailers move stock that would otherwise be discarded, and shoppers get premium products at better prices. That means more savings and less waste."
+      "The platform bridges the hyperlocal supply-demand gap. Retailers recover revenue that would otherwise be lost, and shoppers gain access to affordable groceries close to home."
   }
 ];
 
 const stats = [
-  { value: "12,400 kg", label: "Food waste prevented" },
-  { value: "Rs. 8.2L+", label: "Total customer savings" },
-  { value: "340+", label: "Local retailers onboard" }
+  { value: "12,400 kg", label: "Groceries diverted from waste" },
+  { value: "Rs. 8.2L+", label: "Flash-sale savings unlocked" },
+  { value: "340+", label: "Neighborhood retailers onboard" }
 ];
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
   const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
+  const [impactSummary, setImpactSummary] = useState<ImpactSummary | null>(null);
+  const { dietMode } = useAppPreferences();
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -92,23 +114,32 @@ export default function HomePage() {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    api.impactSummary().then(setImpactSummary).catch(() => setImpactSummary(null));
+  }, []);
+
   const slide = slides[currentSlide];
+  const displayDeals = dietMode === "veg" ? vegDeals : mixedDeals;
+  const displayCategories = dietMode === "veg" ? vegCategories : mixedCategories;
+  const foodModeLabel = dietMode === "veg" ? "Veg mode" : "Veg + Non-Veg mode";
 
   return (
     <main className="min-h-screen bg-background">
       <section className="relative h-screen w-full overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-          style={{ backgroundImage: `url(${slide.image})` }}
+        <VisualPlaceholder
+          title={slide.name}
+          subtitle={slide.category}
+          accent={slide.accent}
+          className="absolute inset-0 min-h-full"
         />
-        <div className="absolute inset-0 bg-foreground/10" />
+        <div className="absolute inset-0 bg-foreground/5" />
 
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
           <span className="text-hero-watermark select-none text-background/10">{slide.name}</span>
         </div>
 
         <div className="absolute left-6 top-6 md:left-8 md:top-8">
-          <span className="text-label text-background/70">ALL OUR DEALS</span>
+          <span className="text-label text-background/70">REAL-TIME HYPERLOCAL DISCOVERY</span>
         </div>
 
         <div className="absolute right-6 top-1/2 flex -translate-y-1/2 flex-col gap-3 md:right-8">
@@ -124,6 +155,13 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
           <span className="text-label mb-2 block text-background/60">{slide.category}</span>
           <h1 className="text-hero-title text-background">{slide.name}</h1>
+          <p className="mt-4 max-w-[620px] text-sm leading-relaxed text-background/75 md:text-base">
+            Nearby retailers upload overstocked and near-expiry groceries. Shoppers discover flash sales ranked by value,
+            urgency, and walking distance.
+          </p>
+          <div className="mt-5 inline-flex rounded-full border border-background/20 bg-background/10 px-4 py-2 text-[11px] uppercase tracking-[0.2em] text-background/85 backdrop-blur">
+            {foodModeLabel}
+          </div>
 
           <div className="absolute bottom-8 right-8 hidden gap-2 md:flex">
             {slides.map((item, index) => (
@@ -134,7 +172,7 @@ export default function HomePage() {
                   index === currentSlide ? "opacity-100 outline outline-1 outline-background" : "opacity-50 hover:opacity-80"
                 }`}
               >
-                <img src={item.image} alt={item.category} className="h-full w-full object-cover" />
+                <VisualPlaceholder title={item.name} subtitle={item.category} accent={item.accent} className="h-full min-h-0" />
               </button>
             ))}
           </div>
@@ -144,15 +182,31 @@ export default function HomePage() {
       <section className="px-6 py-28 md:px-12 md:py-40">
         <div className="mx-auto max-w-[1000px] text-center">
           <h2 className="text-statement text-foreground">
-            Locale, hyperlocal deal discovery connecting you to nearby savings on fresh produce, bakery goods, and daily
-            essentials before they expire.
+            DealDrop connects local retailers struggling to clear overstocked or near-expiry inventory with nearby shoppers
+            looking for timely savings on daily essentials.
           </h2>
+          {impactSummary ? (
+            <div className="mt-12 grid gap-4 text-left sm:grid-cols-3">
+              <div className="rounded-[24px] border border-border bg-card p-5">
+                <p className="text-label text-muted-foreground">Live deals</p>
+                <p className="mt-2 font-display text-4xl text-foreground">{impactSummary.total_active_deals}</p>
+              </div>
+              <div className="rounded-[24px] border border-border bg-card p-5">
+                <p className="text-label text-muted-foreground">Estimated savings</p>
+                <p className="mt-2 font-display text-4xl text-foreground">Rs. {impactSummary.total_estimated_savings.toFixed(0)}</p>
+              </div>
+              <div className="rounded-[24px] border border-border bg-card p-5">
+                <p className="text-label text-muted-foreground">Waste prevented</p>
+                <p className="mt-2 font-display text-4xl text-foreground">{impactSummary.total_waste_prevented_kg.toFixed(0)} kg</p>
+              </div>
+            </div>
+          ) : null}
           <div className="mt-12">
             <Link
               href="/deals"
               className="text-nav inline-block border border-foreground px-8 py-3 transition-all duration-300 hover:bg-foreground hover:text-background"
             >
-              Our concept
+              Explore live deals
             </Link>
           </div>
         </div>
@@ -161,20 +215,24 @@ export default function HomePage() {
       <section className="py-0">
         <div className="grid min-h-[70vh] md:grid-cols-2">
           <div className="relative overflow-hidden">
-            <img src="/design-assets/hero-produce.jpg" alt="Fresh local produce" className="min-h-[400px] h-full w-full object-cover" />
+            <VisualPlaceholder
+              title={dietMode === "veg" ? "South Indian Staples" : "Expanded Grocery Basket"}
+              subtitle={dietMode === "veg" ? "Vegetarian-first flash sales across neighborhood stores" : "Broader flash sales including non-veg inventory when enabled"}
+              accent={dietMode === "veg" ? "moss" : "clay"}
+              className="min-h-[400px] h-full"
+            />
           </div>
           <div className="flex flex-col justify-center px-8 py-16 md:px-16 md:py-0 lg:px-24">
-            <span className="text-section-title mb-6 block text-muted-foreground">HIGH SAVINGS AND ZERO WASTE</span>
+            <span className="text-section-title mb-6 block text-muted-foreground">LOWER WASTE. FASTER SELL-THROUGH.</span>
             <p className="text-body-sm max-w-[420px] leading-relaxed text-muted-foreground">
-              Enhance your daily shopping with savings of up to 70% on quality products approaching their best-before
-              date. Designed to connect conscious consumers with local retailers, our platform ensures great food never
-              goes to waste.
+              Built for kiranas, mini-marts, bakeries, and local grocery sellers, DealDrop helps move surplus inventory
+              before it turns into waste. Customers get real savings on staples they already buy every week.
             </p>
             <div className="mt-10">
               <p className="font-display text-[28px] italic leading-[1.2] text-foreground md:text-[36px]">
-                Save more,
+                Clear stock faster,
                 <br />
-                waste less.
+                save closer to home.
               </p>
             </div>
           </div>
@@ -184,17 +242,22 @@ export default function HomePage() {
       <section id="deals" className="py-20 md:py-28">
         <div className="mb-10 px-6 md:px-12">
           <div className="mx-auto max-w-[1400px]">
-            <span className="text-section-title mb-3 block text-muted-foreground">DISCOVER OUR BEST DEALS NEAR YOU</span>
+            <span className="text-section-title mb-3 block text-muted-foreground">SOUTH INDIAN GROCERY FLASH SALES NEAR YOU</span>
           </div>
         </div>
 
         <div className="px-6 md:px-12">
           <div className="mx-auto max-w-[1400px]">
             <div className="scrollbar-hide -mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 md:mx-0 md:px-0">
-              {deals.map((deal) => (
+              {displayDeals.map((deal) => (
                 <div key={deal.name} className="group w-[240px] flex-shrink-0 cursor-pointer snap-start md:w-[260px]">
                   <div className="relative mb-4 aspect-[3/4] overflow-hidden">
-                    <img src={deal.image} alt={deal.name} className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+                    <VisualPlaceholder
+                      title={deal.name}
+                      subtitle={deal.category}
+                      accent={deal.accent}
+                      className="h-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                    />
                     <div className="absolute inset-0 flex items-center justify-center bg-foreground/0 transition-all duration-500 group-hover:bg-foreground/30">
                       <span className="text-nav border border-background px-5 py-2.5 text-background opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                         Discover
@@ -216,7 +279,7 @@ export default function HomePage() {
                 href="/deals"
                 className="text-nav inline-block border border-foreground px-8 py-3 transition-all duration-300 hover:bg-foreground hover:text-background"
               >
-                All deals
+                See all nearby deals
               </Link>
             </div>
           </div>
@@ -255,7 +318,7 @@ export default function HomePage() {
             href="/deals"
             className="text-nav inline-block border border-foreground px-8 py-3 transition-all duration-300 hover:bg-foreground hover:text-background"
           >
-            About us
+            Why DealDrop works
           </Link>
         </div>
       </section>
@@ -266,22 +329,23 @@ export default function HomePage() {
             <h2 className="mb-8 font-display text-[48px] font-light leading-[1.05] tracking-[-0.02em] text-foreground sm:text-[64px] md:text-[72px] lg:text-[88px]">
               <span className="italic">The</span> story
               <br />
-              <span className="italic">of</span> your
+              <span className="italic">of</span> every
               <br />
-              savings
+              flash sale
             </h2>
             <p className="max-w-[380px] font-display text-[18px] font-light leading-relaxed text-muted-foreground md:text-[20px]">
-              We connect you to the story behind every deal. Discover how much you save and how much waste you prevent.
+              Real-time markdowns, location-aware ranking, and rapid discovery turn neighborhood inventory into a living
+              local marketplace.
             </p>
             <div className="mt-8 hidden aspect-[4/3] overflow-hidden md:block">
-              <img src="/design-assets/hero-market.jpg" alt="Local market" className="h-full w-full object-cover" />
+              <VisualPlaceholder title="Local Routes" subtitle="Deal discovery by proximity, urgency, and savings" accent="ink" className="h-full" />
             </div>
             <div className="mt-8">
               <Link
                 href="/deals"
                 className="text-nav inline-block border border-foreground px-8 py-3 transition-all duration-300 hover:bg-foreground hover:text-background"
               >
-                More questions
+                Browse ranked deals
               </Link>
             </div>
           </div>
@@ -307,10 +371,10 @@ export default function HomePage() {
 
       <section id="categories" className="px-6 py-20 md:px-12 md:py-28">
         <div className="mx-auto max-w-[1200px]">
-          <span className="text-section-title mb-10 block text-muted-foreground">Our categories</span>
+          <span className="text-section-title mb-10 block text-muted-foreground">SHOP BY CATEGORY</span>
 
           <div className="border-t border-border">
-            {categories.map((category, index) => (
+            {displayCategories.map((category, index) => (
               <div
                 key={category.name}
                 className="group relative flex cursor-pointer items-center justify-between border-b border-border py-5 md:py-6"
@@ -323,7 +387,7 @@ export default function HomePage() {
 
                 {hoveredCategory === index ? (
                   <div className="absolute right-32 top-1/2 hidden h-[140px] w-[200px] -translate-y-1/2 overflow-hidden md:block">
-                    <img src={category.image} alt={category.name} className="h-full w-full object-cover" />
+                    <VisualPlaceholder title={category.name} accent={category.accent} className="h-full min-h-0" />
                   </div>
                 ) : null}
 
@@ -355,11 +419,12 @@ export default function HomePage() {
           <div className="order-2 flex flex-col justify-center px-6 py-20 md:order-1 md:px-16 md:py-0 lg:px-24">
             <span className="text-section-title mb-6 block text-muted-foreground">FOR LOCAL RETAILERS</span>
             <h2 className="mb-6 font-display text-[36px] font-light leading-[1.1] text-foreground md:text-[48px] lg:text-[56px]">
-              Turn expiring stock into revenue
+              Turn expiring inventory into hyperlocal demand
             </h2>
             <p className="text-body-sm mb-10 max-w-[420px] text-muted-foreground">
-              List discounted products in seconds. Reach nearby customers actively looking for deals. Reduce waste,
-              increase footfall, and build local loyalty.
+              Upload deals in seconds, auto-calculate discounts, and instantly reach nearby shoppers searching for urgent
+              savings. DealDrop helps retailers recover revenue, increase footfall, and stay visible in their own
+              neighborhood.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
@@ -378,7 +443,12 @@ export default function HomePage() {
           </div>
 
           <div className="order-1 relative overflow-hidden md:order-2">
-            <img src="/design-assets/hero-bakery.jpg" alt="Local bakery store" className="min-h-[400px] h-full w-full object-cover" />
+            <VisualPlaceholder
+              title="Retailer Growth"
+              subtitle="Flash-sale visibility for kiranas, mini marts, and neighborhood grocery stores"
+              accent="clay"
+              className="min-h-[400px] h-full"
+            />
           </div>
         </div>
       </section>

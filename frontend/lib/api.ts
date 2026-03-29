@@ -1,4 +1,4 @@
-import { AuthSession, Deal } from "@/lib/types";
+import { AuthSession, DashboardSummary, Deal, ImpactSummary, SearchSuggestion } from "@/lib/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -36,7 +36,7 @@ export const api = {
       body: JSON.stringify(payload)
     }),
   getMyProducts: (session: AuthSession | null) =>
-    request<{ active_deals: unknown[]; expired_deals: unknown[]; analytics: unknown[] }>("/my-products", {
+    request<{ active_deals: unknown[]; expired_deals: unknown[]; analytics: unknown[]; summary: DashboardSummary }>("/my-products", {
       headers: authHeaders(session)
     }),
   editProduct: (id: number, payload: Record<string, unknown>, session: AuthSession | null) =>
@@ -47,8 +47,12 @@ export const api = {
     }),
   deleteProduct: (id: number, session: AuthSession | null) =>
     request(`/delete-product/${id}`, { method: "DELETE", headers: authHeaders(session) }),
+  impactSummary: () => request<ImpactSummary>("/impact-summary"),
   nearbyDeals: (params: URLSearchParams) => request<Deal[]>(`/nearby-deals?${params.toString()}`),
+  featuredDeals: (params: URLSearchParams) => request<Deal[]>(`/featured-deals?${params.toString()}`),
+  searchSuggestions: (query: string) => request<SearchSuggestion[]>(`/search-suggestions?q=${encodeURIComponent(query)}`),
   dealDetails: (id: number) => request<Deal>(`/deal/${id}`),
-  trackClick: (id: number) => request(`/deal/${id}/click`, { method: "POST" })
+  trackClick: (id: number) => request<{ message: string }>(`/deal/${id}/click`, { method: "POST" }),
+  reserveDeal: (id: number, quantity: number) =>
+    request<{ message: string }>(`/deal/${id}/reserve`, { method: "POST", body: JSON.stringify({ quantity }) })
 };
-
