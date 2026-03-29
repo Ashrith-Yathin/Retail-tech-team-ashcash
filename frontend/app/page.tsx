@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -126,13 +127,14 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-background">
       <section className="relative h-screen w-full overflow-hidden">
-        <VisualPlaceholder
-          title={slide.name}
-          subtitle={slide.category}
-          accent={slide.accent}
-          className="absolute inset-0 min-h-full"
+        <Image
+          src="/perish.webp"
+          alt="DealDrop landing visual"
+          fill
+          priority
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-foreground/5" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(20,16,14,0.18),rgba(20,16,14,0.48))]" />
 
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
           <span className="text-hero-watermark select-none text-background/10">{slide.name}</span>
@@ -172,7 +174,17 @@ export default function HomePage() {
                   index === currentSlide ? "opacity-100 outline outline-1 outline-background" : "opacity-50 hover:opacity-80"
                 }`}
               >
-                <VisualPlaceholder title={item.name} subtitle={item.category} accent={item.accent} className="h-full min-h-0" />
+                <Image
+                  src="/perish.webp"
+                  alt={`${item.name} preview`}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-foreground/35" />
+                <div className="absolute inset-x-0 bottom-0 p-2 text-left text-white">
+                  <span className="block text-[9px] uppercase tracking-[0.18em] text-white/70">{item.category}</span>
+                  <span className="font-display text-lg leading-none">{item.name}</span>
+                </div>
               </button>
             ))}
           </div>
